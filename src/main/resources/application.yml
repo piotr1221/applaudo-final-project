@@ -1,0 +1,12 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /final-project-api
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/auth/realms/final-project
+          jwk-set-uri: http://localhost:8080/auth/realms/final-project/protocol/openid-connect/certs
