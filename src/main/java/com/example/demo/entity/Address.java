@@ -9,11 +9,9 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Product {
+public class Address {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	private String name;
-	private Double price;
-	private Integer stock;
+	private String address;
 }

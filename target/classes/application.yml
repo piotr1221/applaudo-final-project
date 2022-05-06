@@ -4,9 +4,22 @@ server:
     context-path: /final-project-api
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080/auth/realms/final-project
-          jwk-set-uri: http://localhost:8080/auth/realms/final-project/protocol/openid-connect/certs
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+#spring:
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://localhost:8080/auth/realms/final-project
+#          jwk-set-uri: http://localhost:8080/auth/realms/final-project/protocol/openid-connect/certs
