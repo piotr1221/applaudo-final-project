@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MyModelMapper {
 	
-	ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 	
 	public <T, K> K convertEntityToDTO(T entity, Class<K> dtoClass) {
 		return this.modelMapper.map(entity, dtoClass);
