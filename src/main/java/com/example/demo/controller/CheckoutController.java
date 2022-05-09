@@ -27,18 +27,7 @@ public class CheckoutController {
 //	@RolesAllowed("admin")
 //	@PreAuthorize("hasAuthority('SCOPE_write-order')")
 	Map<String, Object> getCheckout(HttpServletRequest request){
-		SecurityContext context = SecurityContextHolder.getContext();
-		Authentication authentication = context.getAuthentication();
-		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		System.out.println(principal.getAccount().getKeycloakSecurityContext().getToken().getScope());
-		
 		Map<String, Object> map = new HashMap<>();
-
-		System.out.println(authentication.getAuthorities());
-		System.out.println(authentication.getCredentials());
-		System.out.println(authentication.getPrincipal());
-		System.out.println(authentication.getDetails());
-		System.out.println(authentication.getName());
 		return map;
 	}
 	
