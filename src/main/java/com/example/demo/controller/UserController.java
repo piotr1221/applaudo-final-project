@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.AddressDTO;
+import com.example.demo.dto.PaymentMethodDTO;
 import com.example.demo.entity.Address;
+import com.example.demo.entity.PaymentMethod;
 import com.example.demo.service.UserService;
 
 @RestController
@@ -28,5 +30,12 @@ public class UserController {
 	public ResponseEntity<List<AddressDTO>> getAddresses(HttpServletRequest request){
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
 		return ResponseEntity.ok(userService.getAddresses(principal.getName()));
+	}
+	
+	@GetMapping("/payment-methods")
+	@ResponseBody
+	public ResponseEntity<List<PaymentMethodDTO>> getPaymentMethods(HttpServletRequest request){
+		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
+		return ResponseEntity.ok(userService.getPaymentMethods(principal.getName()));
 	}
 }
