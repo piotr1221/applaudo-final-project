@@ -19,25 +19,11 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-//	@Autowired
-//	ModelMapper modelMapper;
-	
 	@Autowired
 	MyModelMapper myModelMapper;
 	
-//	public List<ProductDTO> getProducts() {
-//		return productRepository.findAll()
-//								.stream()
-//								.map(p -> myModelMapper.convertEntityToDTO(p, ProductDTO.class))
-//								.collect(Collectors.toList());
-//	}
 	
 	public List<ProductDTO> getProducts(){
 		return myModelMapper.convertAllEntitiesToDTO(productRepository.findAll(), ProductDTO.class);
 	}
-	
-//	public ProductDTO convertEntityToDTO(Product product) {
-//		return modelMapper.map(product, ProductDTO.class);
-//	}
-	
 }

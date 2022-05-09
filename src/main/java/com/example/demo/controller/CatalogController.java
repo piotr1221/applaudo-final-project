@@ -21,7 +21,7 @@ public class CatalogController {
 	
 	@GetMapping("/")
 	@ResponseBody
-	ResponseEntity<List<ProductDTO>> getCatalog(){
+	public ResponseEntity<List<ProductDTO>> getCatalog(){
 		return ResponseEntity.ok(productService.getProducts());
 	}
 	
