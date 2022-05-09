@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,8 +21,8 @@ public class CatalogController {
 	
 	@GetMapping("/")
 	@ResponseBody
-	List<ProductDTO> getCatalog(){
-		return productService.getProducts();
+	ResponseEntity<List<ProductDTO>> getCatalog(){
+		return ResponseEntity.ok(productService.getProducts());
 	}
 	
 }

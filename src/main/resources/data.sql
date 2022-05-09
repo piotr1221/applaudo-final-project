@@ -4,7 +4,7 @@ INSERT INTO PRODUCT (id, name, price, stock) VALUES
 (3, 'Hershey', 2, 100);
 
 INSERT INTO USER (id, username, password) VALUES
-(1, 'user', 'pass');
+(1, 'edwin@gmail.com', '123');
 
 INSERT INTO ADDRESS (id, address, user_id) VALUES
 (1, 'Calle A', 1),

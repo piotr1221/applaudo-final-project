@@ -15,12 +15,20 @@ spring:
     password: 
   jpa:    database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: http://localhost:8080/auth/realms/final-project
-#          jwk-set-uri: http://localhost:8080/auth/realms/final-project/protocol/openid-connect/certs
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/auth/realms/final-project
+          jwk-set-uri: http://localhost:8080/auth/realms/final-project/protocol/openid-connect/certs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:        - health
+        - metrics
+        - loggers
 
 keycloak:
   auth-server-url: http://localhost:8080/auth
@@ -28,3 +36,4 @@ keycloak:
   resource: final-project-client
   public-client: false
   bearer-only: true
+  principal-attribute: preferred_username
