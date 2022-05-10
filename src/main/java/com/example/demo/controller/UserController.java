@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.AddressDTO;
-import com.example.demo.dto.PaymentMethodDTO;
+import com.example.demo.dto.payment.PaymentMethodDTO;
+import com.example.demo.dto.user.AddressDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.utility.KeycloakScopeVerifier;
 

@@ -68,21 +68,28 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             // -- Actuators
             "/actuator/health/",
             // -- H2 Database
-            "h2/**"
+            "h2/**",
+            "/checkout/"
+    };
+    
+    private static final String[] ROLE_USER = {
+    		"/catalog/",
+//    		"/checkout/"
     };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception
     {
         super.configure(http);
-        http
+        http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/catalog/").hasRole("user")
+                .antMatchers(ROLE_USER).hasRole("user")
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 
 //                .and().oauth2ResourceServer()
 //                .jwt()
+                
                 ;
     }
     

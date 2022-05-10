@@ -13,23 +13,23 @@ public class MyModelMapper {
 	
 	private ModelMapper modelMapper;
 	
-	public <T, K> K convertEntityToDTO(T entity, Class<K> dtoClass) {
-		return this.modelMapper.map(entity, dtoClass);
+	public <T, K> K map(T source, Class<K> targetClass) {
+		return this.modelMapper.map(source, targetClass);
 	}
 	
-	public <T, K> List<K> convertAllEntitiesToDTO(List<T> list, Class<K> dtoClass){
-		return list.stream()
-					.map(e -> this.convertEntityToDTO(e, dtoClass))
-					.collect(Collectors.toList());
+	public <T, K> List<K> convertAllEntitiesToDTO(List<T> sourceList, Class<K> targetClass){
+		return sourceList.stream()
+						.map(e -> this.map(e, targetClass))
+						.collect(Collectors.toList());
 	}
 	
 	/*
-	 * T is Entity superclass
-	 * K is DTO superclass
+	 * T is source superclass
+	 * K is target superclass
 	 * */
-	public <T, K> List<K> convertAllEntitiesToDTO(List<T> list, Map<Class<? extends T>, Class<? extends K>> map) {
-		return list.stream()
-					.map(e -> this.convertEntityToDTO(e, map.get(e.getClass())))
-					.collect(Collectors.toList());
+	public <T, K> List<K> convertAllEntitiesToDTO(List<T> sourceList, Map<Class<? extends T>, Class<? extends K>> map) {
+		return sourceList.stream()
+						.map(e -> this.map(e, map.get(e.getClass())))
+						.collect(Collectors.toList());
 	}
 }

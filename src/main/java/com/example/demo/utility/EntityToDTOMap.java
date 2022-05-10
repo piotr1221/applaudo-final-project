@@ -2,9 +2,9 @@ package com.example.demo.utility;
 
 import java.util.Map;
 
-import com.example.demo.dto.BankAccountDTO;
-import com.example.demo.dto.CreditCardDTO;
-import com.example.demo.dto.PaymentMethodDTO;
+import com.example.demo.dto.payment.BankAccountDTO;
+import com.example.demo.dto.payment.CreditCardDTO;
+import com.example.demo.dto.payment.PaymentMethodDTO;
 import com.example.demo.entity.payment.BankAccount;
 import com.example.demo.entity.payment.CreditCard;
 import com.example.demo.entity.payment.PaymentMethod;
