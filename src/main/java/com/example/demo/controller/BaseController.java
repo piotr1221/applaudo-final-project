@@ -21,6 +21,8 @@ public class BaseController {
 
 	@GetMapping("/")
 	@ResponseBody
+//	@RolesAllowed("admin")
+//	@PreAuthorize("hasAuthority('SCOPE_write-order')")
 	public Map<String, Object> ra(HttpServletRequest request) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		Authentication authentication = context.getAuthentication();

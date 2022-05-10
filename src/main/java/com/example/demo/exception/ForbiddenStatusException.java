@@ -5,8 +5,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class ForbiddenStatusException extends ResponseStatusException {
 
-	public ForbiddenStatusException(HttpStatus status, String reason) {
-		super(status, reason);
+	public ForbiddenStatusException(String reason) {
+		super(HttpStatus.FORBIDDEN, reason);
 	}
 
 	private static final long serialVersionUID = 1L;

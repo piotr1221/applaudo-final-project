@@ -24,8 +24,6 @@ public class CheckoutController {
 
 	@GetMapping("/")
 	@ResponseBody
-//	@RolesAllowed("admin")
-//	@PreAuthorize("hasAuthority('SCOPE_write-order')")
 	Map<String, Object> getCheckout(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
 		return map;

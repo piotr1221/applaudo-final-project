@@ -9,16 +9,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
+	
 	@ExceptionHandler(value = {ResponseStatusException.class})
 	public final ResponseEntity<Object> handleEmailExceptions(final ResponseStatusException ex, final WebRequest request) {
 		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), ex.getStatus(), request);
 	}
-	
-//	private ApiError message(final HttpStatus httpStatus, final Exception ex) {
-//		String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
-//		String exceptionName = ex.getClass().getName();
-//		return new ApiError(httpStatus.value(), message, exceptionName);
-//	}
 }
