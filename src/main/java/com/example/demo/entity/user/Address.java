@@ -1,10 +1,9 @@
-package com.example.demo.entity;
+package com.example.demo.entity.user;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 import lombok.Getter;
 

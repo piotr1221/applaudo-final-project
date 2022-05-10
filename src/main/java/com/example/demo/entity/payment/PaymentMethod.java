@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.entity.payment;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+
+import com.example.demo.entity.user.User;
 
 import lombok.Getter;
 

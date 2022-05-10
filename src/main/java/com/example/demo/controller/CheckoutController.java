@@ -7,6 +7,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,21 +19,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.entity.user.User;
+import com.example.demo.service.ProductService;
+import com.example.demo.service.UserService;
+
 @RestController
 @RequestMapping("checkout")
 public class CheckoutController {
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private ProductService productService;
 
-	@GetMapping("/")
+	@GetMapping("/a")
 	@ResponseBody
-	Map<String, Object> getCheckout(HttpServletRequest request){
+	Map<String, Integer> getCheckout(HttpServletRequest request){
+		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
+
+		User user = userService.getUser(principal.getName());
+		
 		Map<String, Object> map = new HashMap<>();
 		return map;
 	}
 	
-	@PostMapping("/product")
+	@GetMapping("/b")
 	@ResponseBody
-	void ra() {
-		
+	Map<String, Integer> ra(HttpServletRequest request) {
+		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
+		return null;
 	}
 	
 }

@@ -22,10 +22,10 @@ import com.example.demo.utility.KeycloakScopeVerifier;
 public class UserController {
 	
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	
 	@Autowired
-	KeycloakScopeVerifier scopeVerifier;
+	private KeycloakScopeVerifier scopeVerifier;
 
 	@GetMapping("/addresses")
 	@ResponseBody

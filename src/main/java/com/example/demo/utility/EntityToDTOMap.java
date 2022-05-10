@@ -5,9 +5,9 @@ import java.util.Map;
 import com.example.demo.dto.BankAccountDTO;
 import com.example.demo.dto.CreditCardDTO;
 import com.example.demo.dto.PaymentMethodDTO;
-import com.example.demo.entity.BankAccount;
-import com.example.demo.entity.CreditCard;
-import com.example.demo.entity.PaymentMethod;
+import com.example.demo.entity.payment.BankAccount;
+import com.example.demo.entity.payment.CreditCard;
+import com.example.demo.entity.payment.PaymentMethod;
 
 public class EntityToDTOMap {
 	public static Map<Class<? extends PaymentMethod>, Class<? extends PaymentMethodDTO>> paymentMethods = Map.ofEntries(

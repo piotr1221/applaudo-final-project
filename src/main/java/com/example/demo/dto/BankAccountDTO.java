@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.PaymentMethod;
+import com.example.demo.entity.payment.PaymentMethod;
 
 import lombok.Data;
 
