@@ -66,7 +66,9 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             // -- Actuators
-            "/actuator/health/"
+            "/actuator/health/",
+            // -- H2 Database
+            "h2/**"
     };
 
     @Override

@@ -9,12 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import lombok.Getter;
 
 @Entity
 @Getter
+@Table(name="users")
 public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -25,6 +28,9 @@ public class User {
 	@OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private List<Address> addresses;
+	
+	@ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="users")
+	private List<PaymentMethod> paymentMethods;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id", referencedColumnName="id")
