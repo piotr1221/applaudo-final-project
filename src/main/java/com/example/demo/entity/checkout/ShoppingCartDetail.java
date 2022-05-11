@@ -8,11 +8,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class ShoppingCartDetail {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -23,4 +25,10 @@ public class ShoppingCartDetail {
 	
 	private Integer quantity;
 	private Double subtotal;
+	
+	public ShoppingCartDetail(Product product, Integer quantity) {
+		this.product = product;
+		this.quantity = quantity;
+		this.subtotal = product.getPrice() * this.quantity;
+	}
 }

@@ -20,9 +20,11 @@ import com.example.demo.entity.checkout.ShoppingCart;
 import com.example.demo.entity.payment.PaymentMethod;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name="users")
 public class User {
 	@Id
@@ -43,6 +45,5 @@ public class User {
 	private List<Order> orders;
 	
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-//	@Transient
 	private ShoppingCart shoppingCart;
 }

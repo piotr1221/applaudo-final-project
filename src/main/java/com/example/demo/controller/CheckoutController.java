@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,15 +38,14 @@ public class CheckoutController {
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> getCheckout(@RequestBody List<Map<String, Object>> orderDetails, HttpServletRequest request){
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return ResponseEntity.ok(checkoutService.startCheckout(orderDetails,
-																userService.getUser(principal.getName())));
+		return ResponseEntity.ok(checkoutService.startCheckout(orderDetails, userService.getUser(principal.getName())));
 	}
 	
-	@GetMapping("/b")
+	@PutMapping("/")
 	@ResponseBody
-	Map<String, Object> ra(HttpServletRequest request) {
+	public ResponseEntity<ShoppingCartDTO> addProductToShoppingCart(@RequestBody List<Map<String, Object>> orderDetails, HttpServletRequest request) {
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return null;
+		return ResponseEntity.ok(checkoutService.addProductToShoppingCart(orderDetails, userService.getUser(principal.getName())));
 	}
 	
 }

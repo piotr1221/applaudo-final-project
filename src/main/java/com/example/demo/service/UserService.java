@@ -32,4 +32,8 @@ public class UserService {
 	public List<PaymentMethodDTO> getPaymentMethods(String username){
 		return myModelMapper.convertAllEntitiesToDTO(this.getUser(username).getPaymentMethods(), EntityToDTOMap.paymentMethods);
 	}
+	
+	public User save(User user) {
+		return userRepository.save(user);
+	}
 }
