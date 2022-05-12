@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 import com.example.demo.entity.user.User;
 
@@ -22,8 +23,8 @@ public abstract class PaymentMethod {
 	private Long id;
 	private Double funds;
 	
-	@ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<User> users;
+//	@ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+//	private List<User> users;
 	
 	public void deduct(double amount) {
 		this.funds -= amount;

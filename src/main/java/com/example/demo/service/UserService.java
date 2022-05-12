@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.AddressDTO;
-import com.example.demo.dto.PaymentMethodDTO;
+import com.example.demo.dto.payment.PaymentMethodDTO;
+import com.example.demo.dto.user.AddressDTO;
 import com.example.demo.entity.user.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.utility.EntityToDTOMap;
@@ -31,5 +31,9 @@ public class UserService {
 	
 	public List<PaymentMethodDTO> getPaymentMethods(String username){
 		return myModelMapper.convertAllEntitiesToDTO(this.getUser(username).getPaymentMethods(), EntityToDTOMap.paymentMethods);
+	}
+	
+	public User save(User user) {
+		return userRepository.save(user);
 	}
 }

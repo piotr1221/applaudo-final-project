@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
-import com.example.demo.exception.ForbiddenStatusException;
+import com.example.demo.exception.responsestatus.ForbiddenStatusException;
 
 public class KeycloakScopeVerifier {
 

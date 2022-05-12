@@ -20,9 +20,11 @@ import com.example.demo.entity.checkout.ShoppingCart;
 import com.example.demo.entity.payment.PaymentMethod;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name="users")
 public class User {
 	@Id
@@ -35,7 +37,11 @@ public class User {
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private List<Address> addresses;
 	
-	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="users")
+//	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="users")
+//	private List<PaymentMethod> paymentMethods;
+	
+	@OneToMany
+	@JoinColumn(name="user_id", referencedColumnName="id")
 	private List<PaymentMethod> paymentMethods;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
@@ -43,6 +49,25 @@ public class User {
 	private List<Order> orders;
 	
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-//	@Transient
 	private ShoppingCart shoppingCart;
+
+	@Override
+	public int hashCode() {
+		return 17;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof User)) return false;
+		User o = (User) obj;
+		if (o.getId() == null || this.getId() == null) return false;
+		return this.getId() == o.getId();
+	}
+
+	@Override
+	public String toString() {
+		return "ID: " + this.getId() + " - Username: " + this.username;
+	}
+	
+	
 }

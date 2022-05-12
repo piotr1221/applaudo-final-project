@@ -1,7 +1,6 @@
-package com.example.demo.dto;
+package com.example.demo.dto.checkout;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class ProductDTO {

@@ -14,4 +14,21 @@ public class Address {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private String address;
+	
+	@Override
+	public int hashCode() {
+		return 13;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Address)) return false;
+		Address o = (Address) obj;
+		if (o.getId() == null || this.getId() == null) return false;
+		return this.getId() == o.getId();
+	}
+	@Override
+	public String toString() {
+		return "ID: " + this.getId() + " - Address: " + this.getAddress();
+	}
+	
 }
