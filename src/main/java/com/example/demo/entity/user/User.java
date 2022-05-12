@@ -37,7 +37,11 @@ public class User {
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private List<Address> addresses;
 	
-	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="users")
+//	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="users")
+//	private List<PaymentMethod> paymentMethods;
+	
+	@OneToMany
+	@JoinColumn(name="user_id", referencedColumnName="id")
 	private List<PaymentMethod> paymentMethods;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)

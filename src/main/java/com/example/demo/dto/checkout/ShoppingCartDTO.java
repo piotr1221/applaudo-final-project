@@ -8,4 +8,5 @@ import lombok.Data;
 public class ShoppingCartDTO {
 	private Long id;
 	private List<ShoppingCartDetailDTO> shoppingCartDetails;
+	private Double total;
 }
