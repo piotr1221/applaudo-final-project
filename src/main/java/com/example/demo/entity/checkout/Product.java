@@ -16,4 +16,22 @@ public class Product {
 	private String name;
 	private Double price;
 	private Integer stock;
+	
+	@Override
+	public int hashCode() {
+		return 5;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Product)) return false;
+		Product o = (Product) obj;
+		if (o.getId() == null || this.getId() == null) return false;
+		return this.getId() == o.getId();
+	}
+	@Override
+	public String toString() {
+		return "ID: " + this.getId() + " - Name: " + this.getName() + " - Price: " + this.getPrice() + " - Stock: " + this.getStock();
+	}
+	
+	
 }

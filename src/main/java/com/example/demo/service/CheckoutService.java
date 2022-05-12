@@ -11,14 +11,15 @@ import com.example.demo.dto.checkout.ShoppingCartDTO;
 import com.example.demo.entity.checkout.ShoppingCart;
 import com.example.demo.entity.checkout.ShoppingCartDetail;
 import com.example.demo.entity.user.User;
-import com.example.demo.repository.CheckoutRepository;
+import com.example.demo.exception.responsestatus.ConflictStatusException;
+import com.example.demo.repository.ShoppingCartRepository;
 import com.example.demo.utility.MyModelMapper;
 
 @Service
 public class CheckoutService {
 	
 	@Autowired
-	private CheckoutRepository checkoutRepository;
+	private ShoppingCartRepository shoppingCartRepository;
 	
 	@Autowired
 	private ProductService productService;
@@ -30,16 +31,43 @@ public class CheckoutService {
 	private MyModelMapper myModelMapper;
 	
 	public ShoppingCartDTO startCheckout(List<Map<String, Object>> checkoutDetails, User user) {
-		user.setShoppingCart(new ShoppingCart(user.getId(), createShoppingCartDetailsFromRequestBody(checkoutDetails)));
+		if(user.getShoppingCart() != null) throw new ConflictStatusException("The checkout process is already started");
+		
+		ShoppingCart shoppingCart = new ShoppingCart(user.getId(), createShoppingCartDetailsFromRequestBody(checkoutDetails));
+		shoppingCart = shoppingCartRepository.save(shoppingCart);
+		user.setShoppingCart(shoppingCart);
 		userService.save(user);
-		return myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);
+		return myModelMapper.map(shoppingCart, ShoppingCartDTO.class);
 	}
 	
 	public ShoppingCartDTO addProductToShoppingCart(List<Map<String, Object>> checkoutDetails, User user) {
+		List<ShoppingCartDetail> shoppingCartDetails = createShoppingCartDetailsFromRequestBody(checkoutDetails);
+		List<ShoppingCartDetail> repeatedShoppingCartDetails = shoppingCartDetails.stream()
+																				.filter(user.getShoppingCart()
+																							.getShoppingCartDetails()::contains)
+																				.collect(Collectors.toList());
+		if (!repeatedShoppingCartDetails.isEmpty()) {
+			throw new ConflictStatusException("The products: "
+											+ repeatedShoppingCartDetails.stream()
+																		.map(e -> e.getProduct().toString())
+																		.collect(Collectors.toList())
+											+ " are already in the checkout");
+		}
 		user.getShoppingCart()
 			.getShoppingCartDetails()
-			.addAll(createShoppingCartDetailsFromRequestBody(checkoutDetails));
-		userService.save(user);
+			.addAll(shoppingCartDetails);
+		shoppingCartRepository.save(user.getShoppingCart());
+		return myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);
+	}
+	
+	public ShoppingCartDTO updateProductQuantity(Integer productId, Map<String, Object> productQuantity, User user) {
+		ShoppingCartDetail shoppingCartDetail = user.getShoppingCart()
+													.getShoppingCartDetails().stream()
+																			.filter(e -> e.getProduct().getId().equals(productId.longValue()))
+																			.findFirst()
+																			.orElseThrow();
+		shoppingCartDetail.setQuantity( (Integer) productQuantity.get("quantity") );
+		shoppingCartRepository.save(user.getShoppingCart());
 		return myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);
 	}
 	
@@ -51,4 +79,5 @@ public class CheckoutService {
 									)
 								).collect(Collectors.toList());
 	}
+	
 }

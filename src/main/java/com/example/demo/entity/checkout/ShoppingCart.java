@@ -27,4 +27,21 @@ public class ShoppingCart {
 	@JoinColumn(name = "shopping_cart_id", referencedColumnName = "id")
 	private List<ShoppingCartDetail> shoppingCartDetails;
 	
+	@Override
+	public int hashCode() {
+		return 7;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ShoppingCart)) return false;
+		ShoppingCart o = (ShoppingCart) obj;
+		if (o.getId() == null || this.getId() == null) return false;
+		return this.getId() == o.getId();
+	}
+
+	@Override
+	public String toString() {
+		return "ShoppingCartID: " + this.getId();
+	}
 }

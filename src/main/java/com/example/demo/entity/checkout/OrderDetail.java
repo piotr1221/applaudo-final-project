@@ -21,4 +21,20 @@ public class OrderDetail {
 	
 	private Integer quantity;
 	private Double subtotal;
+	
+	@Override
+	public int hashCode() {
+		return 11;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof OrderDetail)) return false;
+		OrderDetail o = (OrderDetail) obj;
+		if (o.getId() == null || this.getId() == null) return false;
+		return this.getId() == o.getId();
+	}
+	@Override
+	public String toString() {
+		return "ID: " + this.getId() + " - ProductID: " + this.getProduct().getId() + " - Quantity: " + this.getQuantity() + " - Subtotal: " + this.getSubtotal();
+	}
 }

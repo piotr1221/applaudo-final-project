@@ -46,4 +46,24 @@ public class User {
 	
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	private ShoppingCart shoppingCart;
+
+	@Override
+	public int hashCode() {
+		return 17;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof User)) return false;
+		User o = (User) obj;
+		if (o.getId() == null || this.getId() == null) return false;
+		return this.getId() == o.getId();
+	}
+
+	@Override
+	public String toString() {
+		return "ID: " + this.getId() + " - Username: " + this.username;
+	}
+	
+	
 }
