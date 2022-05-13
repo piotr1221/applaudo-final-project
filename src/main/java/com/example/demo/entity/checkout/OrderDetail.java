@@ -8,9 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class OrderDetail {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -21,6 +23,12 @@ public class OrderDetail {
 	
 	private Integer quantity;
 	private Double subtotal;
+	
+	public OrderDetail(ShoppingCartDetail shoppingCartDetail) {
+		this.product = shoppingCartDetail.getProduct();
+		this.quantity = shoppingCartDetail.getQuantity();
+		this.subtotal = shoppingCartDetail.getSubtotal();
+	}
 	
 	@Override
 	public int hashCode() {

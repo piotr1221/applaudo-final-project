@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.example.demo.entity.payment.PaymentMethod;
 import com.example.demo.entity.user.Address;
+import com.example.demo.entity.user.User;
 
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -35,10 +37,14 @@ public class ShoppingCart {
 	@ManyToOne
 	private PaymentMethod paymentMethod;
 	
-	public ShoppingCart(Long id, List<ShoppingCartDetail> shoppingCartDetails) {
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	private User user;
+	
+	public ShoppingCart(Long id, List<ShoppingCartDetail> shoppingCartDetails, User user) {
 		this.id = id;
 		this.shoppingCartDetails = shoppingCartDetails;
 		this.updateTotal();
+		this.user = user;
 	}
 	
 	public void addShoppingCartDetails(List<ShoppingCartDetail> shoppingCartDetails) {
@@ -55,6 +61,10 @@ public class ShoppingCart {
 		this.total = this.shoppingCartDetails.stream()
 											.map(ShoppingCartDetail::getSubtotal)
 											.reduce((double) 0, Double::sum);
+	}
+	
+	public boolean isEmpty() {
+		return this.getShoppingCartDetails().isEmpty();
 	}
 	
 	@Override

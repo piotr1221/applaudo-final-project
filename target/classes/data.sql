@@ -3,8 +3,8 @@ INSERT INTO product (id, name, price, stock) VALUES
 (2, 'Pepsi', 3, 100),
 (3, 'Hershey', 2, 100);
 
-INSERT INTO users (id, username, password) VALUES
-(1, 'edwin@gmail.com', '123');
+INSERT INTO users (id, username, password, full_name) VALUES
+(1, 'edwin@gmail.com', '123', 'Edwin Aguilar');
 
 INSERT INTO address (id, address, user_id) VALUES
 (1, 'Calle A', 1),
