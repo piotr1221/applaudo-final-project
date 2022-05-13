@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,10 +44,10 @@ public class CheckoutController {
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> startCheckout(@RequestBody List<Map<String, Object>> orderDetails, HttpServletRequest request){
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return ResponseEntity.ok(checkoutService.startCheckout(orderDetails, userService.getUser(principal.getName())));
+		return new ResponseEntity<>(checkoutService.startCheckout(orderDetails, userService.getUser(principal.getName())), HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/")
+	@PutMapping("/products")
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> addProductToShoppingCart(@RequestBody List<Map<String, Object>> orderDetails, HttpServletRequest request) {
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
@@ -63,6 +64,12 @@ public class CheckoutController {
 	public ResponseEntity<ShoppingCartDTO> removeProductFromShoppingCart(@PathVariable Integer productId, HttpServletRequest request){
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
 		return ResponseEntity.ok(checkoutService.removeProductFromShoppingCart(productId, userService.getUser(principal.getName())));
+	}
+	
+	@PutMapping("/address")
+	@ResponseBody
+	public ResponseEntity<ShoppingCartDTO> addShippingAddress(@RequestBody Map<String, Object> address, HttpServletRequest request) {
+		return ResponseEntity.ok(checkoutService.addShippingAddress(address, request.getUserPrincipal()));
 	}
 	
 }

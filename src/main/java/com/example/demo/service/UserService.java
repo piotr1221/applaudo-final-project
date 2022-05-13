@@ -1,15 +1,19 @@
 package com.example.demo.service;
 
+import java.security.Principal;
 import java.util.List;
 
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.payment.PaymentMethodDTO;
 import com.example.demo.dto.user.AddressDTO;
+import com.example.demo.entity.user.Address;
 import com.example.demo.entity.user.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.utility.EntityToDTOMap;
+import com.example.demo.utility.KeycloakScopeVerifier;
 import com.example.demo.utility.MyModelMapper;
 
 @Service
@@ -19,18 +23,30 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	@Autowired
+	private KeycloakScopeVerifier scopeVerifier;
+	
+	@Autowired
 	private MyModelMapper myModelMapper;
 	
 	public User getUser(String username) {
 		return userRepository.findByUsername(username);
 	}
+	
+	public Address getAddress(Long id, Principal principal) {
+		scopeVerifier.hasScope((KeycloakAuthenticationToken) principal, "read-user-addresses");
+		User user = this.getUser(principal.getName());
+		return user.getAddresses().stream()
+								.filter(e -> e.getId().equals(id))
+								.findFirst()
+								.orElseThrow();
+	}
 
-	public List<AddressDTO> getAddresses(String username){
-		return myModelMapper.convertAllEntitiesToDTO(this.getUser(username).getAddresses(), AddressDTO.class);
+	public List<AddressDTO> getAddresses(User user){
+		return myModelMapper.convertAllEntitiesToDTO(user.getAddresses(), AddressDTO.class);
 	}
 	
-	public List<PaymentMethodDTO> getPaymentMethods(String username){
-		return myModelMapper.convertAllEntitiesToDTO(this.getUser(username).getPaymentMethods(), EntityToDTOMap.paymentMethods);
+	public List<PaymentMethodDTO> getPaymentMethods(User user){
+		return myModelMapper.convertAllEntitiesToDTO(user.getPaymentMethods(), EntityToDTOMap.paymentMethods);
 	}
 	
 	public User save(User user) {

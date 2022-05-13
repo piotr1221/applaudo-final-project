@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +86,21 @@ public class CheckoutService {
 		ShoppingCartDetail shoppingCartDetail = findShoppingCartDetailByProductId(productId, user);
 		user.getShoppingCart().removeShoppingCartDetail(shoppingCartDetail);
 		shoppingCartDetailRepository.delete(shoppingCartDetail);
+		
+		if (user.getShoppingCart().isEmpty()) {
+			ShoppingCart shoppingCart = user.getShoppingCart();
+			user.setShoppingCart(null);
+			shoppingCartRepository.delete(shoppingCart);
+			return null;
+		}
+		return myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);
+	}
+	
+	public ShoppingCartDTO addShippingAddress(Map<String, Object> address, Principal principal) {
+		User user = userService.getUser(principal.getName());
+		checkoutNotNull(user);
+		user.getShoppingCart().setAddress(userService.getAddress(( (Integer) address.get("addressId") ).longValue(), principal));
+		shoppingCartRepository.save(user.getShoppingCart());
 		return myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);
 	}
 	

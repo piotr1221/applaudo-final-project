@@ -31,8 +31,7 @@ public class UserController {
 	@ResponseBody
 	public ResponseEntity<List<AddressDTO>> getAddresses(HttpServletRequest request) {
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		scopeVerifier.hasScope(principal, "read-user-addresses");
-		return ResponseEntity.ok(userService.getAddresses(principal.getName()));
+		return ResponseEntity.ok(userService.getAddresses(userService.getUser(principal.getName())));
 	}
 	
 	@GetMapping("/payment-methods")
@@ -40,6 +39,6 @@ public class UserController {
 	public ResponseEntity<List<PaymentMethodDTO>> getPaymentMethods(HttpServletRequest request) {
 		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
 		scopeVerifier.hasScope(principal, "read-payment-methods");
-		return ResponseEntity.ok(userService.getPaymentMethods(principal.getName()));
+		return ResponseEntity.ok(userService.getPaymentMethods(userService.getUser(principal.getName())));
 	}
 }

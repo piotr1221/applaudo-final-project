@@ -57,6 +57,10 @@ public class ShoppingCart {
 											.reduce((double) 0, Double::sum);
 	}
 	
+	public boolean isEmpty() {
+		return this.getShoppingCartDetails().isEmpty();
+	}
+	
 	@Override
 	public int hashCode() {
 		return 7;
