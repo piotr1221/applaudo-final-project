@@ -6,7 +6,7 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 
 import com.example.demo.exception.responsestatus.ForbiddenStatusException;
 
-public class KeycloakScopeVerifier {
+public class ScopeVerifier {
 
 	public void hasScope(KeycloakAuthenticationToken principal, String scope) throws ForbiddenStatusException {
 		boolean hasScope = Arrays.stream(principal.getAccount()

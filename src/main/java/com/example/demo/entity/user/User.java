@@ -9,11 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.example.demo.entity.checkout.Order;
 import com.example.demo.entity.checkout.ShoppingCart;
@@ -32,13 +30,11 @@ public class User {
 	private Long id;
 	private String username;
 	private String password;
+	private String fullName;
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private List<Address> addresses;
-	
-//	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="users")
-//	private List<PaymentMethod> paymentMethods;
 	
 	@OneToMany
 	@JoinColumn(name="user_id", referencedColumnName="id")
@@ -68,6 +64,5 @@ public class User {
 	public String toString() {
 		return "ID: " + this.getId() + " - Username: " + this.username;
 	}
-	
 	
 }

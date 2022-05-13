@@ -9,9 +9,9 @@ import com.example.demo.dto.user.UserBasicInfoDTO;
 import lombok.Data;
 
 @Data
-public class ShoppingCartDTO {
+public class OrderDTO {
 	private Long id;
-	private List<ShoppingCartDetailDTO> shoppingCartDetails;
+	private List<OrderDetailDTO> shoppingCartDetails;
 	private Double total;
 	private AddressDTO address;
 	private PaymentMethodDTO paymentMethod;

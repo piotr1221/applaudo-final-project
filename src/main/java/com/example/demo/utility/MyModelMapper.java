@@ -13,6 +13,11 @@ public class MyModelMapper {
 	
 	private ModelMapper modelMapper;
 	
+	/*
+	 * T is source superclass
+	 * K is target superclass
+	 * */
+	
 	public <T, K> K map(T source, Class<K> targetClass) {
 		return this.modelMapper.map(source, targetClass);
 	}
@@ -23,13 +28,13 @@ public class MyModelMapper {
 						.collect(Collectors.toList());
 	}
 	
-	/*
-	 * T is source superclass
-	 * K is target superclass
-	 * */
 	public <T, K> List<K> convertAllEntitiesToDTO(List<T> sourceList, Map<Class<? extends T>, Class<? extends K>> map) {
 		return sourceList.stream()
-						.map(e -> this.map(e, map.get(e.getClass())))
+						.map(e -> this.map(e, map))
 						.collect(Collectors.toList());
+	}
+	
+	public <T, K> K map(T source, Map<Class<? extends T>, Class<? extends K>> map) {
+		return this.map(source, map.get(source.getClass()));
 	}
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.checkout.OrderDTO;
 import com.example.demo.dto.checkout.ShoppingCartDTO;
 import com.example.demo.service.CheckoutService;
 import com.example.demo.service.UserService;
@@ -36,40 +37,53 @@ public class CheckoutController {
 	@GetMapping("/")
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> getCheckout(HttpServletRequest request){
-		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return ResponseEntity.ok(checkoutService.getCheckout(userService.getUser(principal.getName())));
+		return ResponseEntity.ok(checkoutService.getCheckout(request.getUserPrincipal()));
 	}
 	
 	@PostMapping("/")
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> startCheckout(@RequestBody List<Map<String, Object>> orderDetails, HttpServletRequest request){
-		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return new ResponseEntity<>(checkoutService.startCheckout(orderDetails, userService.getUser(principal.getName())), HttpStatus.CREATED);
+		return new ResponseEntity<>(checkoutService.startCheckout(orderDetails, request.getUserPrincipal()), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/products")
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> addProductToShoppingCart(@RequestBody List<Map<String, Object>> orderDetails, HttpServletRequest request) {
-		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return ResponseEntity.ok(checkoutService.addProductToShoppingCart(orderDetails, userService.getUser(principal.getName())));
+		return ResponseEntity.ok(checkoutService.addProductToShoppingCart(orderDetails, request.getUserPrincipal()));
 	}
 	
 	@PutMapping("/products/{productId}")
 	public ResponseEntity<ShoppingCartDTO> updateProductQuantity(@PathVariable Integer productId, @RequestBody Map<String, Object> productQuantity, HttpServletRequest request) {
-		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return ResponseEntity.ok(checkoutService.updateProductQuantity(productId, productQuantity, userService.getUser(principal.getName())));
+		return ResponseEntity.ok(checkoutService.updateProductQuantity(productId, productQuantity, request.getUserPrincipal()));
 	}
 	
 	@DeleteMapping("/products/{productId}")
 	public ResponseEntity<ShoppingCartDTO> removeProductFromShoppingCart(@PathVariable Integer productId, HttpServletRequest request){
-		KeycloakAuthenticationToken principal = (KeycloakAuthenticationToken) request.getUserPrincipal();
-		return ResponseEntity.ok(checkoutService.removeProductFromShoppingCart(productId, userService.getUser(principal.getName())));
+		return ResponseEntity.ok(checkoutService.removeProductFromShoppingCart(productId, request.getUserPrincipal()));
 	}
 	
 	@PutMapping("/address")
 	@ResponseBody
 	public ResponseEntity<ShoppingCartDTO> addShippingAddress(@RequestBody Map<String, Object> address, HttpServletRequest request) {
 		return ResponseEntity.ok(checkoutService.addShippingAddress(address, request.getUserPrincipal()));
+	}
+	
+	@PutMapping("/payment-method")
+	@ResponseBody
+	public ResponseEntity<ShoppingCartDTO> addPaymentMethod(@RequestBody Map<String, Object> paymentMethod, HttpServletRequest request) {
+		return ResponseEntity.ok(checkoutService.addPaymentMethod(paymentMethod, request.getUserPrincipal()));
+	}
+	
+	@PostMapping("/orders")
+	@ResponseBody
+	public ResponseEntity<OrderDTO> createOrder(HttpServletRequest request) {
+		return new ResponseEntity<>(checkoutService.createOrder(request.getUserPrincipal()), HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/orders")
+	@ResponseBody
+	public ResponseEntity<List<OrderDTO>> getOrders(HttpServletRequest request) {
+		return ResponseEntity.ok(checkoutService.getOrders(request.getUserPrincipal()));
 	}
 	
 }

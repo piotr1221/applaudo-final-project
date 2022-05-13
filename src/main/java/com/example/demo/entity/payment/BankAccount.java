@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class BankAccount extends PaymentMethod{
+public class BankAccount extends PaymentMethod {
 	private String accountNumber;
 }
