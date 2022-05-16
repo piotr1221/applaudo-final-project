@@ -169,7 +169,10 @@ public class CheckoutService {
 		orderDetails = orderDetailRepository.saveAll(orderDetails);
 		Order order = new Order(user.getShoppingCart(), orderDetails);
 		order = orderRepository.save(order);
-
+		ShoppingCart shoppingCart = user.getShoppingCart();
+		user.setShoppingCart(null);
+		shoppingCartRepository.delete(shoppingCart);
+		
 		return getOrderDTO(order);
 	}
 	
@@ -180,7 +183,7 @@ public class CheckoutService {
 												.collect(Collectors.toList());
 	}
 	
-	private List<ShoppingCartDetail> createShoppingCartDetailsFromRequestBody(List<Map<String, Object>> checkoutDetails) {
+	public List<ShoppingCartDetail> createShoppingCartDetailsFromRequestBody(List<Map<String, Object>> checkoutDetails) {
 		return checkoutDetails.stream()
 								.map(e -> new ShoppingCartDetail(
 										productService.getProduct( ((Integer) e.get("productId")).longValue() ), 
@@ -189,7 +192,7 @@ public class CheckoutService {
 								).collect(Collectors.toList());
 	}
 	
-	private ShoppingCartDetail findShoppingCartDetailByProductId(Integer productId, User user) {
+	public ShoppingCartDetail findShoppingCartDetailByProductId(Integer productId, User user) {
 		return user.getShoppingCart()
 					.getShoppingCartDetails().stream()
 											.filter(e -> e.getProduct().getId().equals(productId.longValue()))
@@ -197,11 +200,11 @@ public class CheckoutService {
 											.orElseThrow();
 	}
 	
-	private void checkoutNotNull(User user) {
+	public void checkoutNotNull(User user) {
 		if(user.getShoppingCart() == null) throw new NotFoundStatusException("The user hasn't started the checkout process");
 	}
 	
-	private ShoppingCartDTO getShoppingCartDTO(User user) {
+	public ShoppingCartDTO getShoppingCartDTO(User user) {
 		ShoppingCartDTO shoppingCartDTO = myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);
 		
 		if (user.getShoppingCart().getPaymentMethod() != null) {
@@ -211,7 +214,7 @@ public class CheckoutService {
 		return shoppingCartDTO;
 	}
 	
-	private OrderDTO getOrderDTO(Order order) {
+	public OrderDTO getOrderDTO(Order order) {
 		OrderDTO orderDTO = myModelMapper.map(order, OrderDTO.class);
 		orderDTO.setPaymentMethod(myModelMapper.map(order.getPaymentMethod(), EntityToDTOMap.paymentMethods));
 		orderDTO.setShoppingCartDetails(myModelMapper.convertAllEntitiesToDTO(order.getOrderDetails(), OrderDetailDTO.class));

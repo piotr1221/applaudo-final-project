@@ -6,10 +6,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
-public class Address {
+@Setter
+public class Address implements Cloneable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
@@ -31,4 +33,8 @@ public class Address {
 		return "ID: " + this.getId() + " - Address: " + this.getAddress();
 	}
 	
+//	@Override
+//	public Address clone() {
+//		return new()
+//	}
 }

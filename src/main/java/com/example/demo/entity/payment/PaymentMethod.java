@@ -6,10 +6,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
+@Setter
 public abstract class PaymentMethod {
 	@Id
 	private Long id;

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">client</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.example.demo.service;
+
+import java.security.Principal;
+import java.util.List;
+
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.payment.PaymentMethodDTO;
+import com.example.demo.dto.user.AddressDTO;
+import com.example.demo.entity.payment.PaymentMethod;
+import com.example.demo.entity.user.Address;
+import com.example.demo.entity.user.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.utility.EntityToDTOMap;
+import com.example.demo.utility.ScopeVerifier;
+import com.example.demo.utility.MyModelMapper;
+
+@Service
+<span class="fc" id="L21">public class UserService {</span>
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private ScopeVerifier scopeVerifier;
+	
+	@Autowired
+	private MyModelMapper myModelMapper;
+	
+	public User getUser(String username) {
+<span class="fc" id="L33">		return userRepository.findByUsername(username);</span>
+	}
+	
+	public Address getAddress(Long id, Principal principal) {
+<span class="fc" id="L37">		scopeVerifier.hasScope((KeycloakAuthenticationToken) principal, &quot;read-user-addresses&quot;);</span>
+<span class="fc" id="L38">		User user = this.getUser(principal.getName());</span>
+<span class="fc" id="L39">		return user.getAddresses().stream()</span>
+<span class="fc" id="L40">								.filter(e -&gt; e.getId().equals(id))</span>
+<span class="fc" id="L41">								.findFirst()</span>
+<span class="fc" id="L42">								.orElseThrow();</span>
+	}
+	
+	public PaymentMethod getPaymentMethod(Long id, Principal principal) {
+<span class="fc" id="L46">		scopeVerifier.hasScope((KeycloakAuthenticationToken) principal, &quot;read-payment-methods&quot;);</span>
+<span class="fc" id="L47">		User user = this.getUser(principal.getName());</span>
+<span class="fc" id="L48">		return user.getPaymentMethods().stream()</span>
+<span class="fc" id="L49">									.filter(e -&gt; e.getId().equals(id))</span>
+<span class="fc" id="L50">									.findFirst()</span>
+<span class="fc" id="L51">									.orElseThrow();</span>
+	}
+
+	public List&lt;AddressDTO&gt; getAddresses(Principal principal){
+<span class="fc" id="L55">		scopeVerifier.hasScope((KeycloakAuthenticationToken) principal, &quot;read-user-addresses&quot;);</span>
+<span class="fc" id="L56">		User user = this.getUser(principal.getName());</span>
+<span class="fc" id="L57">		return myModelMapper.convertAllEntitiesToDTO(user.getAddresses(), AddressDTO.class);</span>
+	}
+	
+	public List&lt;PaymentMethodDTO&gt; getPaymentMethods(Principal principal){
+<span class="fc" id="L61">		scopeVerifier.hasScope((KeycloakAuthenticationToken)principal, &quot;read-payment-methods&quot;);</span>
+<span class="fc" id="L62">		User user = this.getUser(principal.getName());</span>
+<span class="fc" id="L63">		return myModelMapper.convertAllEntitiesToDTO(user.getPaymentMethods(), EntityToDTOMap.paymentMethods);</span>
+	}
+	
+	public User save(User user) {
+<span class="fc" id="L67">		return userRepository.save(user);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

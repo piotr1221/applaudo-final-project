@@ -40,7 +40,7 @@ public class ShoppingCartDetail {
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 		this.subtotal = this.getQuantity() * this.getProduct().getPrice();
-		this.shoppingCart.updateTotal();
+		if (this.shoppingCart != null) this.shoppingCart.updateTotal();
 	}
 	
 	@Override

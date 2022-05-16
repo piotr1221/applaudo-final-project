@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShoppingCart.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">client</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.entity.checkout</a> &gt; <span class="el_source">ShoppingCart.java</span></div><h1>ShoppingCart.java</h1><pre class="source lang-java linenums">package com.example.demo.entity.checkout;
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import com.example.demo.entity.payment.PaymentMethod;
+import com.example.demo.entity.user.Address;
+import com.example.demo.entity.user.User;
+
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+public class ShoppingCart {
+	@Id
+	private Long id;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = &quot;shopping_cart_id&quot;, referencedColumnName = &quot;id&quot;)
+	private List&lt;ShoppingCartDetail&gt; shoppingCartDetails;
+	
+	private Double total;
+	@ManyToOne
+	private Address address;
+	@ManyToOne
+	private PaymentMethod paymentMethod;
+	
+	@OneToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
+	private User user;
+	
+<span class="fc" id="L43">	public ShoppingCart(Long id, List&lt;ShoppingCartDetail&gt; shoppingCartDetails, User user) {</span>
+<span class="fc" id="L44">		this.id = id;</span>
+<span class="fc" id="L45">		this.shoppingCartDetails = shoppingCartDetails;</span>
+<span class="fc" id="L46">		this.updateTotal();</span>
+<span class="fc" id="L47">		this.user = user;</span>
+<span class="fc" id="L48">	}</span>
+	
+	public void addShoppingCartDetails(List&lt;ShoppingCartDetail&gt; shoppingCartDetails) {
+<span class="fc" id="L51">		this.getShoppingCartDetails().addAll(shoppingCartDetails);</span>
+<span class="fc" id="L52">		this.updateTotal();</span>
+<span class="fc" id="L53">	}</span>
+	
+	public void removeShoppingCartDetail(ShoppingCartDetail shoppingCartDetail) {
+<span class="fc" id="L56">		this.getShoppingCartDetails().remove(shoppingCartDetail);</span>
+<span class="fc" id="L57">		this.updateTotal();</span>
+<span class="fc" id="L58">	}</span>
+	
+	public void updateTotal() {
+<span class="fc" id="L61">		this.total = this.shoppingCartDetails.stream()</span>
+<span class="fc" id="L62">											.map(ShoppingCartDetail::getSubtotal)</span>
+<span class="fc" id="L63">											.reduce((double) 0, Double::sum);</span>
+<span class="fc" id="L64">	}</span>
+	
+	public boolean isEmpty() {
+<span class="fc" id="L67">		return this.getShoppingCartDetails().isEmpty();</span>
+	}
+	
+	@Override
+	public int hashCode() {
+<span class="nc" id="L72">		return 7;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		if (!(obj instanceof ShoppingCart)) return false;</span>
+<span class="nc" id="L78">		ShoppingCart o = (ShoppingCart) obj;</span>
+<span class="nc bnc" id="L79" title="All 4 branches missed.">		if (o.getId() == null || this.getId() == null) return false;</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">		return this.getId() == o.getId();</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L85">		return &quot;ShoppingCartID: &quot; + this.getId();</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -37,7 +37,7 @@ public class ShoppingCart {
 	@ManyToOne
 	private PaymentMethod paymentMethod;
 	
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.PERSIST, fetch=FetchType.LAZY)
 	private User user;
 	
 	public ShoppingCart(Long id, List<ShoppingCartDetail> shoppingCartDetails, User user) {
@@ -84,4 +84,5 @@ public class ShoppingCart {
 	public String toString() {
 		return "ShoppingCartID: " + this.getId();
 	}
+	
 }

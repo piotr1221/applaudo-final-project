@@ -52,6 +52,7 @@ public class UserService {
 	}
 
 	public List<AddressDTO> getAddresses(Principal principal){
+		scopeVerifier.hasScope((KeycloakAuthenticationToken) principal, "read-user-addresses");
 		User user = this.getUser(principal.getName());
 		return myModelMapper.convertAllEntitiesToDTO(user.getAddresses(), AddressDTO.class);
 	}

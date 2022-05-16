@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.checkout.OrderDTO;
 import com.example.demo.dto.checkout.ShoppingCartDTO;
 import com.example.demo.service.CheckoutService;
-import com.example.demo.service.UserService;
 
 @RestController
 @RequestMapping("checkout")
 public class CheckoutController {
-	
-	@Autowired
-	private UserService userService;
 	
 	@Autowired
 	private CheckoutService checkoutService;

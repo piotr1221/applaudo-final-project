@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckoutService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">client</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.service</a> &gt; <span class="el_source">CheckoutService.java</span></div><h1>CheckoutService.java</h1><pre class="source lang-java linenums">package com.example.demo.service;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.checkout.OrderDTO;
+import com.example.demo.dto.checkout.OrderDetailDTO;
+import com.example.demo.dto.checkout.ShoppingCartDTO;
+import com.example.demo.entity.checkout.Order;
+import com.example.demo.entity.checkout.OrderDetail;
+import com.example.demo.entity.checkout.ShoppingCart;
+import com.example.demo.entity.checkout.ShoppingCartDetail;
+import com.example.demo.entity.user.User;
+import com.example.demo.exception.responsestatus.BadRequestStatusException;
+import com.example.demo.exception.responsestatus.ConflictStatusException;
+import com.example.demo.exception.responsestatus.NotFoundStatusException;
+import com.example.demo.repository.OrderDetailRepository;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.ShoppingCartDetailRepository;
+import com.example.demo.repository.ShoppingCartRepository;
+import com.example.demo.utility.EntityToDTOMap;
+import com.example.demo.utility.MyModelMapper;
+import com.example.demo.utility.ScopeVerifier;
+
+@Service
+<span class="fc" id="L33">public class CheckoutService {</span>
+	
+	@Autowired
+	private ShoppingCartRepository shoppingCartRepository;
+	
+	@Autowired
+	private ShoppingCartDetailRepository shoppingCartDetailRepository;
+	
+	@Autowired
+	private OrderRepository orderRepository;
+	
+	@Autowired
+	private OrderDetailRepository orderDetailRepository;
+	
+	@Autowired
+	private ProductService productService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private MyModelMapper myModelMapper;
+	
+	@Autowired
+	private ScopeVerifier scopeVerifier;
+	
+	public ShoppingCartDTO getCheckout(Principal principal) {
+<span class="fc" id="L60">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L61">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L63">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public ShoppingCartDTO startCheckout(List&lt;Map&lt;String, Object&gt;&gt; checkoutDetails, Principal principal) {
+<span class="fc" id="L67">		User user = userService.getUser(principal.getName());</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		if(user.getShoppingCart() != null) throw new ConflictStatusException(&quot;The checkout process is already started&quot;);</span>
+		
+<span class="fc" id="L70">		ShoppingCart shoppingCart = new ShoppingCart(user.getId(), createShoppingCartDetailsFromRequestBody(checkoutDetails), user);</span>
+<span class="fc" id="L71">		shoppingCart = shoppingCartRepository.save(shoppingCart);</span>
+<span class="fc" id="L72">		user.setShoppingCart(shoppingCart);</span>
+<span class="fc" id="L73">		userService.save(user);</span>
+		
+<span class="fc" id="L75">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public ShoppingCartDTO addProductToShoppingCart(List&lt;Map&lt;String, Object&gt;&gt; checkoutDetails, Principal principal) {
+<span class="fc" id="L79">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L80">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L82">		List&lt;ShoppingCartDetail&gt; shoppingCartDetails = createShoppingCartDetailsFromRequestBody(checkoutDetails);</span>
+<span class="fc" id="L83">		List&lt;ShoppingCartDetail&gt; repeatedShoppingCartDetails = shoppingCartDetails.stream()</span>
+<span class="fc" id="L84">																				.filter(user.getShoppingCart()</span>
+<span class="fc" id="L85">																							.getShoppingCartDetails()::contains)</span>
+<span class="fc" id="L86">																				.collect(Collectors.toList());</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">		if (!repeatedShoppingCartDetails.isEmpty()) {</span>
+<span class="fc" id="L88">			throw new ConflictStatusException(&quot;The products: &quot;</span>
+<span class="fc" id="L89">											+ repeatedShoppingCartDetails.stream()</span>
+<span class="fc" id="L90">																		.map(e -&gt; e.getProduct().toString())</span>
+<span class="fc" id="L91">																		.collect(Collectors.toList())</span>
+											+ &quot; are already in the checkout&quot;);
+		}
+
+<span class="fc" id="L95">		user.getShoppingCart()</span>
+<span class="fc" id="L96">			.addShoppingCartDetails(shoppingCartDetails);</span>
+<span class="fc" id="L97">		shoppingCartRepository.save(user.getShoppingCart());</span>
+		
+<span class="fc" id="L99">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public ShoppingCartDTO updateProductQuantity(Integer productId, Map&lt;String, Object&gt; productQuantity, Principal principal) {
+<span class="fc" id="L103">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L104">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L106">		ShoppingCartDetail shoppingCartDetail = findShoppingCartDetailByProductId(productId, user);</span>
+<span class="fc" id="L107">		shoppingCartDetail.setQuantity( (Integer) productQuantity.get(&quot;quantity&quot;) );</span>
+<span class="fc" id="L108">		shoppingCartDetailRepository.save(shoppingCartDetail);</span>
+		
+<span class="fc" id="L110">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public ShoppingCartDTO removeProductFromShoppingCart(Integer productId, Principal principal) {
+<span class="fc" id="L114">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L115">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L117">		ShoppingCartDetail shoppingCartDetail = findShoppingCartDetailByProductId(productId, user);</span>
+<span class="fc" id="L118">		user.getShoppingCart().removeShoppingCartDetail(shoppingCartDetail);</span>
+<span class="fc" id="L119">		shoppingCartDetailRepository.delete(shoppingCartDetail);</span>
+		
+<span class="fc bfc" id="L121" title="All 2 branches covered.">		if (user.getShoppingCart().isEmpty()) {</span>
+<span class="fc" id="L122">			ShoppingCart shoppingCart = user.getShoppingCart();</span>
+<span class="fc" id="L123">			user.setShoppingCart(null);</span>
+<span class="fc" id="L124">			shoppingCartRepository.delete(shoppingCart);</span>
+<span class="fc" id="L125">			return null;</span>
+		}
+		
+<span class="fc" id="L128">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public ShoppingCartDTO addShippingAddress(Map&lt;String, Object&gt; address, Principal principal) {
+<span class="fc" id="L132">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L133">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L135">		Long addressId = ( (Integer) address.get(&quot;addressId&quot;) ).longValue();</span>
+<span class="fc" id="L136">		user.getShoppingCart().setAddress(userService.getAddress(addressId, principal));</span>
+<span class="fc" id="L137">		shoppingCartRepository.save(user.getShoppingCart());</span>
+		
+<span class="fc" id="L139">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public ShoppingCartDTO addPaymentMethod(Map&lt;String, Object&gt; paymentMethod, Principal principal) {
+<span class="fc" id="L143">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L144">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L146">		Long paymentMethodId = ( (Integer) paymentMethod.get(&quot;paymentMethodId&quot;) ).longValue();</span>
+<span class="fc" id="L147">		user.getShoppingCart().setPaymentMethod(userService.getPaymentMethod(paymentMethodId, principal));</span>
+<span class="fc" id="L148">		shoppingCartRepository.save(user.getShoppingCart());</span>
+		
+<span class="fc" id="L150">		return getShoppingCartDTO(user);</span>
+	}
+	
+	public OrderDTO createOrder(Principal principal) {
+<span class="fc" id="L154">		scopeVerifier.hasScope((KeycloakAuthenticationToken) principal, &quot;write-order&quot;);</span>
+<span class="fc" id="L155">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L156">		checkoutNotNull(user);</span>
+		
+<span class="fc" id="L158">		List&lt;String&gt; exceptions = new ArrayList&lt;&gt;();</span>
+		
+<span class="fc bfc" id="L160" title="All 2 branches covered.">		if (user.getShoppingCart().getAddress() == null) exceptions.add(&quot;Shipping address is missing&quot;);</span>
+		
+<span class="fc bfc" id="L162" title="All 2 branches covered.">		if (user.getShoppingCart().getPaymentMethod() == null) exceptions.add(&quot;Payment method is missing&quot;);</span>
+		
+<span class="fc bfc" id="L164" title="All 2 branches covered.">		if (!exceptions.isEmpty()) throw new BadRequestStatusException(exceptions.toString());</span>
+		
+<span class="fc" id="L166">		List&lt;OrderDetail&gt; orderDetails = user.getShoppingCart().getShoppingCartDetails().stream()</span>
+<span class="fc" id="L167">																						.map(OrderDetail::new)</span>
+<span class="fc" id="L168">																						.collect(Collectors.toList());</span>
+<span class="fc" id="L169">		orderDetails = orderDetailRepository.saveAll(orderDetails);</span>
+<span class="fc" id="L170">		Order order = new Order(user.getShoppingCart(), orderDetails);</span>
+<span class="fc" id="L171">		order = orderRepository.save(order);</span>
+<span class="fc" id="L172">		ShoppingCart shoppingCart = user.getShoppingCart();</span>
+<span class="fc" id="L173">		user.setShoppingCart(null);</span>
+<span class="fc" id="L174">		shoppingCartRepository.delete(shoppingCart);</span>
+		
+<span class="fc" id="L176">		return getOrderDTO(order);</span>
+	}
+	
+	public List&lt;OrderDTO&gt; getOrders(Principal principal) {
+<span class="fc" id="L180">		User user = userService.getUser(principal.getName());</span>
+<span class="fc" id="L181">		return orderRepository.findByUser(user).stream()</span>
+<span class="fc" id="L182">												.map(this::getOrderDTO)</span>
+<span class="fc" id="L183">												.collect(Collectors.toList());</span>
+	}
+	
+	public List&lt;ShoppingCartDetail&gt; createShoppingCartDetailsFromRequestBody(List&lt;Map&lt;String, Object&gt;&gt; checkoutDetails) {
+<span class="fc" id="L187">		return checkoutDetails.stream()</span>
+<span class="fc" id="L188">								.map(e -&gt; new ShoppingCartDetail(</span>
+<span class="fc" id="L189">										productService.getProduct( ((Integer) e.get(&quot;productId&quot;)).longValue() ), </span>
+<span class="fc" id="L190">										(Integer) e.get(&quot;quantity&quot;)</span>
+									)
+<span class="fc" id="L192">								).collect(Collectors.toList());</span>
+	}
+	
+	public ShoppingCartDetail findShoppingCartDetailByProductId(Integer productId, User user) {
+<span class="fc" id="L196">		return user.getShoppingCart()</span>
+<span class="fc" id="L197">					.getShoppingCartDetails().stream()</span>
+<span class="fc" id="L198">											.filter(e -&gt; e.getProduct().getId().equals(productId.longValue()))</span>
+<span class="fc" id="L199">											.findFirst()</span>
+<span class="fc" id="L200">											.orElseThrow();</span>
+	}
+	
+	public void checkoutNotNull(User user) {
+<span class="fc bfc" id="L204" title="All 2 branches covered.">		if(user.getShoppingCart() == null) throw new NotFoundStatusException(&quot;The user hasn't started the checkout process&quot;);</span>
+<span class="fc" id="L205">	}</span>
+	
+	public ShoppingCartDTO getShoppingCartDTO(User user) {
+<span class="fc" id="L208">		ShoppingCartDTO shoppingCartDTO = myModelMapper.map(user.getShoppingCart(), ShoppingCartDTO.class);</span>
+		
+<span class="fc bfc" id="L210" title="All 2 branches covered.">		if (user.getShoppingCart().getPaymentMethod() != null) {</span>
+<span class="fc" id="L211">			shoppingCartDTO.setPaymentMethod(myModelMapper.map(user.getShoppingCart().getPaymentMethod(), EntityToDTOMap.paymentMethods));</span>
+		}
+		
+<span class="fc" id="L214">		return shoppingCartDTO;</span>
+	}
+	
+	public OrderDTO getOrderDTO(Order order) {
+<span class="fc" id="L218">		OrderDTO orderDTO = myModelMapper.map(order, OrderDTO.class);</span>
+<span class="fc" id="L219">		orderDTO.setPaymentMethod(myModelMapper.map(order.getPaymentMethod(), EntityToDTOMap.paymentMethods));</span>
+<span class="fc" id="L220">		orderDTO.setShoppingCartDetails(myModelMapper.convertAllEntitiesToDTO(order.getOrderDetails(), OrderDetailDTO.class));</span>
+<span class="fc" id="L221">		return orderDTO;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
